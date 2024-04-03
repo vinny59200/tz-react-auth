@@ -1,26 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import EasyUserList from './component/EasyUserList';
+import { EasyUser } from './model/EasyUser';
 
-function App() {
+const App: React.FC = () => {
+  const [easyUserList, setEasyUserList] = useState<EasyUser[]>([]);
+
+  useEffect(() => {
+    // Fetch the list of users from your API or service
+    // and update the state
+    // setEasyUserList(fetchedUsers);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <nav>
+        <h1>Easy Spring Auth</h1>
+      </nav>
+      <EasyUserList easyUserList={easyUserList} />
     </div>
   );
-}
+};
 
 export default App;

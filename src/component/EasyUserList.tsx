@@ -12,6 +12,7 @@ const EasyUserList: React.FC<EasyUserListProps> = ({ easyUserList }) => {
         // Logic to create a new user
         setUsers([...users, newUser]);
         setShowCreateUserModal(false);
+        setNewUser({ uuid: '', username: '', password: '' })
     };
 
     const [newUser, setNewUser] = useState({ uuid: '', username: '', password: '' });
@@ -29,32 +30,52 @@ const EasyUserList: React.FC<EasyUserListProps> = ({ easyUserList }) => {
         console.log(easyUsers);
     }, []); // The empty array ensures this effect runs once on mount
 
-    const handleInputChange = (e:any) => {
+    const handleInputChange = (e: any) => {
         setNewUser({ ...newUser, [e.target.name]: e.target.value });
     };
 
-// Add these styles at the top of your component file or in a separate CSS file
-const modalStyle: CSSProperties = {
-    position: 'fixed', // 'fixed' is a valid value for the 'position' property
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    zIndex: 1000,
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '5px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-};
+    const [editingUser, setEditingUser] = useState<EasyUser | null>(null);
 
-const overlayStyle: CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 999
-};
+    const handleEditClick = (user: EasyUser) => {
+        setEditingUser(user);
+        setShowCreateUserModal(true);
+    };
+
+    const handleInputChangeEdit = (e:any) => {
+        setEditingUser({ ...editingUser, [e.target.name]: e.target.value } as EasyUser);
+    };
+
+    const updateUser = () => {
+        // Logic to update an existing user
+        const updatedUsers = users.map(u => u.uuid === editingUser?.uuid ? editingUser : u);
+        setUsers(updatedUsers);
+        setShowCreateUserModal(false);
+        setEditingUser(null)
+    };
+
+    // Add these styles at the top of your component file or in a separate CSS file
+    const modalStyle: CSSProperties = {
+        position: 'fixed', // 'fixed' is a valid value for the 'position' property
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1000,
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '5px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+    };
+
+    const overlayStyle: CSSProperties = {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 999
+    };
+
     return (
         <main>
             <table>
@@ -65,12 +86,18 @@ const overlayStyle: CSSProperties = {
                         <th>password</th>
                     </tr>
                 </thead>
+  
                 <tbody>
-                    {users.map((user, index) => (
-                        <tr key={index}>
+                    {users.map((user) => (
+                        <tr key={user.uuid}>
                             <td>{user.uuid}</td>
                             <td>{user.username}</td>
                             <td>{user.password}</td>
+                            <td>
+                                <button onClick={() => handleEditClick(user)}>
+                                    Edit
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
@@ -88,45 +115,81 @@ const overlayStyle: CSSProperties = {
 
             {showCreateUserModal && (
                 <>
-                 <div style={overlayStyle} onClick={() => setShowCreateUserModal(false)} />
-                <div style={modalStyle}>
-                    <form onSubmit={(e:any) => {
-                        e.preventDefault();
-                        createUser();
-                    }}>
-                        <label>
-                            UUID:
-                            <input
-                                type="text"
-                                name="uuid"
-                                value={newUser.uuid}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </label>
-                        <label>
-                            Username:
-                            <input
-                                type="text"
-                                name="username"
-                                value={newUser.username}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </label>
-                        <label>
-                            Password:
-                            <input
-                                type="password"
-                                name="password"
-                                value={newUser.password}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </label>
-                        <button type="submit">Submit</button>
-                    </form>
-                </div>
+                    <div style={overlayStyle} onClick={() => setShowCreateUserModal(false)} />
+                    <div style={modalStyle}>
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            editingUser ? updateUser() : createUser();
+                        }}>
+                             { editingUser &&(<>
+                            <label>
+                                UUID:
+                                <input
+                                    type="text"
+                                    name="uuid"
+                                    value={editingUser.uuid}
+                                    onChange={handleInputChangeEdit}
+                                    required
+                                />
+                            </label>
+                            <label>
+                                Username:
+                                <input
+                                    type="text"
+                                    name="username"
+                                    value={editingUser.username}
+                                    onChange={handleInputChangeEdit}
+                                    required
+                                />
+                            </label>
+                            <label>
+                                Password:
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={editingUser.password}
+                                    onChange={handleInputChangeEdit}
+                                    required
+                                />
+                            </label>
+                            </>)}
+                            { !editingUser &&(<>
+                            <label>
+                                UUID:
+                                <input
+                                    type="text"
+                                    name="uuid"
+                                    value={newUser.uuid}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </label>
+                            <label>
+                                Username:
+                                <input
+                                    type="text"
+                                    name="username"
+                                    value={newUser.username}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </label>
+                            <label>
+                                Password:
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={newUser.password}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </label>
+                            </>)}
+                            <button type="submit">
+                                {editingUser ? 'Update User' : 'Create User'}
+                            </button>
+                        </form>
+                    </div>
                 </>
             )}
 

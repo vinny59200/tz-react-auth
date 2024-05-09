@@ -4,7 +4,7 @@ import { EasyUser } from '../model/EasyUser';
 interface EasyUserListProps {
     easyUserList: EasyUser[];
 }
-
+//
 const EasyUserList: React.FC<EasyUserListProps> = ({ easyUserList }) => {
     const [showCreateUserModal, setShowCreateUserModal] = useState(false);
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, CSSProperties } from "react";
 import { EasyUser } from "../model/EasyUser";
 import '../App.css';
+import { v4 as uuidv4 } from 'uuid';
 
 interface EasyUserListProps {
   easyUserList: EasyUser[];
@@ -13,11 +14,11 @@ const EasyUserList: React.FC<EasyUserListProps> = ({ easyUserList }) => {
     // Logic to create a new user
     setUsers([...users, newUser]);
     setShowCreateUserModal(false);
-    setNewUser({ uuid: "", username: "", password: "" });
+    setNewUser({ uuid:  uuidv4(), username: "", password: "" });
   };
 
   const [newUser, setNewUser] = useState({
-    uuid: "",
+    uuid:  uuidv4(),
     username: "",
     password: "",
   });
@@ -113,7 +114,7 @@ const EasyUserList: React.FC<EasyUserListProps> = ({ easyUserList }) => {
             <th>uuid</th>
             <th>username</th>
             <th>password</th>
-            <th>Actions</th>
+            <th>action</th>
           </tr>
         </thead>
 
@@ -189,16 +190,6 @@ const EasyUserList: React.FC<EasyUserListProps> = ({ easyUserList }) => {
               )}
               {!editingUser && (
                 <>
-                  <label>
-                    UUID:
-                    <input
-                      type="text"
-                      name="uuid"
-                      value={newUser.uuid}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </label>
                   <label>
                     Username:
                     <input
